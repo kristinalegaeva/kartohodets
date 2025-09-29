@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Google Maps JS API Example</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Подключаем API с callback на initMap -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDuLp1CUBzwTWRhkyUT4PYR4RnXuEE_UmA&callback=initMap&v=weekly&libraries=marker"
+        async defer></script>
+
+    <script src="index.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <h1>Картоходец Demo v0</h1>
+    <div id="cover">
+        <div id="maps" class="hidden">
+            <div id="map">
+            </div>
+            <div id="street-view">
+            </div>
+            <button class='bt' id="guess">угадать</button>
+            <button class='bt hidden' id="next">слдщ</button>
+
+        </div>
+        <div id='search'>ищем самые ебеня... </div>
+    </div>
+
+
+</body>
+
+</html>

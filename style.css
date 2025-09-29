@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: black;
+    color: white;
+    font-weight: 200;
+}
+
+h1 {
+    font-weight: 200;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#cover {
+    display: flex;
+    height: 500px;
+    justify-content: center;
+    align-items: center;
+}
+
+#maps {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    position: relative;
+
+}
+
+#map {
+    width: 40%;
+    height: 100%;
+
+}
+
+#street-view {
+    height: 100%;
+    width: 60%;
+    filter: invert(1);
+}
+
+.bt {
+    width: 200px;
+    height: 40px;
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: black;
+    border: 1px solid white;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    font-weight: 200;
+    font-size: 12pt;
+}
