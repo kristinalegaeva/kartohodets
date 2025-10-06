@@ -80,6 +80,7 @@ function updateStreetView() {
             ansLoc = data.location.latLng;
             streetView.setPosition(ansLoc);
             mapsCover.classList.remove('hidden');
+            guessButton.disabled = false;
             search.classList.add('hidden');
             document.getElementById('map').querySelectorAll('table').forEach((t) => console.log(t.parentElement.classList.add('hidden')));
             document.getElementById('street-view').querySelectorAll('table').forEach((t) => console.log(t.parentElement.classList.add('hidden')));
@@ -88,6 +89,7 @@ function updateStreetView() {
 
         } else {
             mapsCover.classList.add('hidden');
+            guessButton.disabled = true;
             search.classList.remove('hidden');
             console.log("нет панорамы");
             updateStreetView(); // рекурсия

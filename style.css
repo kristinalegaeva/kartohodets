@@ -4,6 +4,10 @@ body {
     background-color: black;
     color: white;
     font-weight: 200;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 h1 {
@@ -16,7 +20,7 @@ h1 {
 
 #cover {
     display: flex;
-    height: 500px;
+    flex-grow: 1;
     justify-content: center;
     align-items: center;
 }
@@ -41,17 +45,26 @@ h1 {
     filter: invert(1);
 }
 
+button {
+    cursor: pointer;
+}
+
 .bt {
     width: 200px;
     height: 40px;
-    position: absolute;
-    bottom: -50px;
-    left: 50%;
-    transform: translate(-50%);
     background-color: black;
     border: 1px solid white;
     font-family: 'Inter', sans-serif;
     color: white;
     font-weight: 200;
     font-size: 12pt;
+    align-self: center;
+    margin: 20px;
+}
+
+.bt:disabled {
+    color: #aaa;
+    border-color: #aaa;
+    cursor: default;
+
 }
