@@ -30,13 +30,11 @@ h1 {
     height: 100%;
     width: 100%;
     position: relative;
-
 }
 
 #map {
     width: 40%;
     height: 100%;
-
 }
 
 #street-view {
@@ -67,4 +65,28 @@ button {
     border-color: #aaa;
     cursor: default;
 
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 23pt;
+    }
+
+    .bt {
+        font-size: 16pt;
+    }
+
+    #maps {
+        flex-direction: column-reverse;
+    }
+
+    #map {
+        height: 30%;
+        width: 100%;
+    }
+
+    #street-view {
+        height: 70%;
+        width: 100%;
+    }
 }
