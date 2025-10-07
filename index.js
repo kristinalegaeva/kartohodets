@@ -47,6 +47,17 @@ async function initMap() {
             gmpDraggable: false,
             title: "This is answer lol",
         });
+        const linePath = [
+            ansLoc,
+            userMarker.position,
+        ];
+        const lineBetweenGuessAndAns = new google.maps.Polyline({
+            path: linePath,
+            strokeColor: "#F0F",
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+        });
+        lineBetweenGuessAndAns.setMap(map);
         map.setZoom(3);
         map.setCenter(ansLoc);
         userMarker.gmpDraggable = false;
@@ -73,7 +84,7 @@ function updateStreetView() {
     const coords = getRandomCoords(mosLatMin, mosLatMax, mosLngMin, mosLngMax);
 
     const svService = new google.maps.StreetViewService();
-    const radius = 500; // метров
+    const radius = 5000; // метров
 
     svService.getPanorama({ location: coords, radius }, (data, status) => {
         if (status === google.maps.StreetViewStatus.OK) {
