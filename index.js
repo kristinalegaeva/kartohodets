@@ -5,7 +5,7 @@ const guessButton = document.getElementById('guess');
 const nextButton = document.getElementById('next');
 
 let ansLoc;
-
+var distanceBetweenGuessAndAns
 async function initMap() {
     // Request needed libraries.
     const { Map } = await google.maps.importLibrary("maps");
@@ -57,6 +57,9 @@ async function initMap() {
             strokeOpacity: 1.0,
             strokeWeight: 2,
         });
+        distanceBetweenGuessAndAns = google.maps.geometry.spherical.computeDistanceBetween (ansLoc, userMarker.position);
+        distanceBetweenGuessAndAns = (distanceBetweenGuessAndAns / 1000).toFixed(0); // переводим в километры
+        console.log(distanceBetweenGuessAndAns);
         lineBetweenGuessAndAns.setMap(map);
         map.setZoom(3);
         map.setCenter(ansLoc);
