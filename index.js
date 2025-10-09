@@ -4,8 +4,9 @@ const search = document.getElementById('search');
 const guessButton = document.getElementById('guess');
 const nextButton = document.getElementById('next');
 
+var distanceBetweenGuessAndAns = document.getElementById('distanceBetweenGuessAndAns');
+
 let ansLoc;
-var distanceBetweenGuessAndAns
 async function initMap() {
     // Request needed libraries.
     const { Map } = await google.maps.importLibrary("maps");
@@ -17,10 +18,17 @@ async function initMap() {
         mapId: '4504f8b37365c3d0',
     });
 
+    const guessPin = new google.maps.marker.PinElement({
+        background: "#4285F4",
+        borderColor: "#ffffff",
+        glyphColor: "white" ,
+    });
+
     userMarker = new AdvancedMarkerElement({
         map,
         position: { lat: 0, lng: 0 },
         gmpDraggable: true,
+        content: guessPin.element,
         title: "You wanna guess",
     });
 
@@ -51,20 +59,33 @@ async function initMap() {
             ansLoc,
             userMarker.position,
         ];
+        const lineSymbol = {
+            path: google.maps.SymbolPath.CIRCLE, // small circle → dots
+            scale: 2,
+            fillOpacity: 0.5,
+            strokeOpacity: 1,
+        };
         const lineBetweenGuessAndAns = new google.maps.Polyline({
             path: linePath,
-            strokeColor: "#F0F",
-            strokeOpacity: 1.0,
-            strokeWeight: 2,
+            strokeColor: "#000",
+            strokeOpacity: 0,
+            strokeWeight: 1,
+            icons: [
+                {
+                    icon: lineSymbol,
+                    offset: "0",
+                    repeat: "20px", // spacing between dots
+                },
+            ]
         });
         distanceBetweenGuessAndAns = google.maps.geometry.spherical.computeDistanceBetween (ansLoc, userMarker.position);
         distanceBetweenGuessAndAns = (distanceBetweenGuessAndAns / 1000).toFixed(0); // переводим в километры
-        console.log(distanceBetweenGuessAndAns);
+        document.getElementById('distanceDisplay').innerHTML = distanceBetweenGuessAndAns;
         lineBetweenGuessAndAns.setMap(map);
         map.setZoom(3);
         map.setCenter(ansLoc);
         userMarker.gmpDraggable = false;
-
+        distanceDisplay.classList.remove('hidden');
         nextButton.classList.remove('hidden');
         guessButton.classList.add('hidden');
     })
@@ -113,6 +134,7 @@ function updateStreetView() {
 nextButton.addEventListener('click', (event) => {
     guessButton.classList.remove('hidden');
     nextButton.classList.add('hidden');
+    distanceDisplay.classList.add('hidden');
     initMap()
 
 })

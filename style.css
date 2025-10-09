@@ -43,6 +43,15 @@ h1 {
     filter: invert(1);
 }
 
+#distanceDisplay {
+    font-family: 'Inter', sans-serif;
+    color: white;
+    font-weight: 200;
+    font-size: 12pt;
+    align-self: center;
+    margin: 20px;
+}
+
 button {
     cursor: pointer;
 }
