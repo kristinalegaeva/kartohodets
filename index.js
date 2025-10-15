@@ -98,8 +98,11 @@ function resultGame() {
     game.map.setCenter(game.ansLoc);
     game.userMarker.gmpDraggable = false;
 
-    const distance = google.maps.geometry.spherical.computeDistanceBetween(game.ansLoc, game.userMarker.position);
-    document.getElementById("distanceDisplay").textContent = (distance / 1000).toFixed(0);
+    let distance = google.maps.geometry.spherical.computeDistanceBetween(game.ansLoc, game.userMarker.position);
+    if (distance < 1000) distance = distance + ' m';
+    else if (distance < 10000) distance = (distance / 1000).toFixed(2) + ' km';
+    else distance = (distance / 1000).toFixed(0) + ' km'
+    document.getElementById("distanceDisplay").textContent = distance;
 
     showGameUI('next');
 }
