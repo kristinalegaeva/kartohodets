@@ -18,11 +18,17 @@ h1 {
     display: none !important;
 }
 
+.blur {
+    filter: blur(30px);
+    opacity: 0.5;
+}
+
 #cover {
     display: flex;
     flex-grow: 1;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 #maps {
@@ -30,6 +36,8 @@ h1 {
     height: 100%;
     width: 100%;
     position: relative;
+    transition: 1s ease-in-out;
+
 }
 
 #map {
@@ -43,13 +51,22 @@ h1 {
     filter: invert(1);
 }
 
+#search {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 #distanceDisplay {
     font-family: 'Inter', sans-serif;
     color: white;
     font-weight: 200;
+    height: 20px;
     font-size: 12pt;
     align-self: center;
     margin: 20px;
+    margin-bottom: 0;
 }
 
 button {

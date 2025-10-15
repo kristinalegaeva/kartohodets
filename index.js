@@ -1,142 +1,172 @@
-let map, userMarker, ansMarker, streetView;
-const mapsCover = document.getElementById('maps');
-const search = document.getElementById('search');
-const guessButton = document.getElementById('guess');
-const nextButton = document.getElementById('next');
+const game = {
+    map: null,
+    streetView: null,
+    userMarker: null,
+    ansMarker: null,
+    ansPin: null,
+    ansLoc: null,
+    line: null,
+};
 
-var distanceBetweenGuessAndAns = document.getElementById('distanceBetweenGuessAndAns');
+// Инициализации
 
-let ansLoc;
 async function initMap() {
-    // Request needed libraries.
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-    map = new Map(document.getElementById('map'), {
+    game.map = new Map(document.getElementById('map'), {
         center: { lat: 0, lng: 0 },
-        zoom: 1,
+        zoom: 2,
         mapId: '4504f8b37365c3d0',
     });
 
-    const guessPin = new google.maps.marker.PinElement({
-        background: "#4285F4",
-        borderColor: "#ffffff",
-        glyphColor: "white" ,
+    const userPin = new google.maps.marker.PinElement({
+        background: "#000",
+        borderColor: "#fff",
+        glyphColor: "#fff",
     });
 
-    userMarker = new AdvancedMarkerElement({
-        map,
+    game.userMarker = new AdvancedMarkerElement({
+        map: game.map,
         position: { lat: 0, lng: 0 },
         gmpDraggable: true,
-        content: guessPin.element,
+        content: userPin.element,
         title: "You wanna guess",
     });
 
-    map.addListener("click", (event) => {
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', event.latLng);
-        userMarker.position = event.latLng;
+    game.ansPin = new google.maps.marker.PinElement({
+        background: "#fff",
+        borderColor: "#000",
+        glyphColor: '#000',
     });
 
-    streetView = new google.maps.StreetViewPanorama(
+    game.map.addListener("click", (event) => {
+        if (game.userMarker.gmpDraggable)
+            game.userMarker.position = event.latLng;
+    });
+
+    game.streetView = new google.maps.StreetViewPanorama(
         document.getElementById("street-view"),
         {
             pov: { heading: 165, pitch: 0 },
             zoom: 1,
-            showRoadLabels: false,     // убирает названия улиц
-            addressControl: false,     // убирает адрес в левом верхнем углу
+            showRoadLabels: false,
+            addressControl: false,
         }
     );
+
+    attachUIEvents();
     updateStreetView();
-
-    guessButton.addEventListener('click', (event) => {
-        ansMarker = new AdvancedMarkerElement({
-            map,
-            position: ansLoc,
-            gmpDraggable: false,
-            title: "This is answer lol",
-        });
-        const linePath = [
-            ansLoc,
-            userMarker.position,
-        ];
-        const lineSymbol = {
-            path: google.maps.SymbolPath.CIRCLE, // small circle → dots
-            scale: 2,
-            fillOpacity: 0.5,
-            strokeOpacity: 1,
-        };
-        const lineBetweenGuessAndAns = new google.maps.Polyline({
-            path: linePath,
-            strokeColor: "#000",
-            strokeOpacity: 0,
-            strokeWeight: 1,
-            icons: [
-                {
-                    icon: lineSymbol,
-                    offset: "0",
-                    repeat: "20px", // spacing between dots
-                },
-            ]
-        });
-        distanceBetweenGuessAndAns = google.maps.geometry.spherical.computeDistanceBetween (ansLoc, userMarker.position);
-        distanceBetweenGuessAndAns = (distanceBetweenGuessAndAns / 1000).toFixed(0); // переводим в километры
-        document.getElementById('distanceDisplay').innerHTML = distanceBetweenGuessAndAns;
-        lineBetweenGuessAndAns.setMap(map);
-        map.setZoom(3);
-        map.setCenter(ansLoc);
-        userMarker.gmpDraggable = false;
-        distanceDisplay.classList.remove('hidden');
-        nextButton.classList.remove('hidden');
-        guessButton.classList.add('hidden');
-    })
-
 }
 
-function getRandomCoords(latMin, latMax, lngMin, lngMax) {
-    const lat = latMin + Math.random() * (latMax - latMin);
-    const lng = lngMin + Math.random() * (lngMax - lngMin);
-    return { lat, lng };
+function attachUIEvents() {
+    document.getElementById("guess").addEventListener("click", resultGame);
+    document.getElementById("next").addEventListener("click", resetGame);
 }
 
+// Игровая логика
 
 function updateStreetView() {
-    const mosLatMin = -90;
-    const mosLatMax = 90;
-    const mosLngMin = -180;
-    const mosLngMax = 180;
-
-    const coords = getRandomCoords(mosLatMin, mosLatMax, mosLngMin, mosLngMax);
-
+    const coords = getRandomCoords();
     const svService = new google.maps.StreetViewService();
-    const radius = 5000; // метров
+    showGameUI('search');
 
-    svService.getPanorama({ location: coords, radius }, (data, status) => {
+    svService.getPanorama({ location: coords, radius: 5000 }, (data, status) => {
         if (status === google.maps.StreetViewStatus.OK) {
-            ansLoc = data.location.latLng;
-            streetView.setPosition(ansLoc);
-            mapsCover.classList.remove('hidden');
-            guessButton.disabled = false;
-            search.classList.add('hidden');
-            document.getElementById('map').querySelectorAll('table').forEach((t) => console.log(t.parentElement.classList.add('hidden')));
-            document.getElementById('street-view').querySelectorAll('table').forEach((t) => console.log(t.parentElement.classList.add('hidden')));
-
-
-
+            game.ansLoc = data.location.latLng;
+            game.streetView.setPosition(game.ansLoc);
+            showGameUI('guess');
+            console.log('нашлась панорама')
         } else {
-            mapsCover.classList.add('hidden');
-            guessButton.disabled = true;
-            search.classList.remove('hidden');
             console.log("нет панорамы");
-            updateStreetView(); // рекурсия
+            updateStreetView();
         }
     });
 }
-nextButton.addEventListener('click', (event) => {
-    guessButton.classList.remove('hidden');
-    nextButton.classList.add('hidden');
-    distanceDisplay.classList.add('hidden');
-    initMap()
 
-})
+function resultGame() {
+    game.ansMarker = new google.maps.marker.AdvancedMarkerElement({
+        map: game.map,
+        position: game.ansLoc,
+        gmpDraggable: false,
+        content: game.ansPin.element,
+        title: "This is answer lol",
+    });
+
+    drawLine(game.ansLoc, game.userMarker.position)
+    //game.map.setZoom(4);
+    game.map.setCenter(game.ansLoc);
+    game.userMarker.gmpDraggable = false;
+
+    const distance = google.maps.geometry.spherical.computeDistanceBetween(game.ansLoc, game.userMarker.position);
+    document.getElementById("distanceDisplay").textContent = (distance / 1000).toFixed(0);
+
+    showGameUI('next');
+}
+
+function resetGame() {
+    document.getElementById("distanceDisplay").textContent = " ";
+    game.userMarker.gmpDraggable = true;
+    if (game.ansMarker) {
+        game.ansMarker.map = null;
+        game.ansMarker = null;
+    }
+    if (game.line) {
+        game.line.setMap(null);
+        game.line = null;
+    }
+    game.userMarker.position = { lat: 0, lng: 0 };
+    game.map.setCenter(game.userMarker.position);
+    game.map.setZoom(2);
+
+    updateStreetView();
+}
+
+// UI и вспомогательные функции
+
+function showGameUI(stage) {
+    switch (stage) {
+        case 'search':
+            document.getElementById('next').classList.add('hidden');
+            document.getElementById('maps').classList.add('blur');
+            document.getElementById("guess").classList.remove('hidden');
+            document.getElementById("guess").disabled = true;
+            document.getElementById('street-view').querySelectorAll('table').forEach((t) => console.log(t.parentElement.classList.add('hidden')));
+            document.getElementById('map').querySelectorAll('table').forEach((t) => console.log(t.parentElement.classList.add('hidden')));
+            document.getElementById('search').classList.remove('hidden');
+            break;
+        case 'guess':
+            document.getElementById('maps').classList.remove('blur');
+            document.getElementById('maps').classList.remove('hidden');
+
+            document.getElementById("guess").disabled = false;
+            document.getElementById('search').classList.add('hidden');
+            break;
+        case 'next':
+            document.getElementById('next').classList.remove('hidden');
+            document.getElementById("guess").classList.add('hidden');
+            break;
+    }
+}
+
+function getRandomCoords() {
+    const lat = -90 + Math.random() * 180;
+    const lng = -180 + Math.random() * 360;
+    return { lat, lng };
+}
+
+function drawLine(a, b) {
+    game.line = new google.maps.Polyline({
+        path: [a, b],
+        strokeOpacity: 0,
+        strokeColor: "#fff",
+        icons: [{
+            icon: { path: google.maps.SymbolPath.CIRCLE, scale: 1.5, fillOpacity: 0.5, strokeOpacity: 1 },
+            offset: "0",
+            repeat: "15px",
+        }],
+        map: game.map,
+    });
+}
 
 initMap();
